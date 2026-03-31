@@ -2,13 +2,14 @@ package com.example.pokemonapp
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -22,7 +23,6 @@ import com.example.pokemonapp.ui.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun App() {
     val navController = rememberNavController()
     val viewModel: PokemonViewModel = viewModel { PokemonViewModel() }
@@ -32,45 +32,77 @@ fun App() {
     val currentDestination = navBackStackEntry?.destination
 
     val title = when {
-        currentDestination?.hasRoute<Screen.Home>() == true -> "Home"
-        currentDestination?.hasRoute<Screen.Pokedex>() == true -> "Pokédex"
+        currentDestination?.hasRoute<Screen.Home>() == true -> "Pokédex Home"
+        currentDestination?.hasRoute<Screen.Pokedex>() == true -> "Pokédex List"
         currentDestination?.hasRoute<Screen.Details>() == true -> "Detalhes"
         currentDestination?.hasRoute<Screen.Team>() == true -> "Meu Time"
-        else -> "Pokédex App"
+        else -> "Pokédex"
     }
 
     MaterialTheme {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(title) },
+                CenterAlignedTopAppBar(
+                    title = { 
+                        Text(
+                            title,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                        ) 
+                    },
                     navigationIcon = {
                         if (currentDestination?.hasRoute<Screen.Home>() == false) {
                             IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                             }
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
             },
             bottomBar = {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 8.dp
+                ) {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<Screen.Home>() } == true,
-                        onClick = { navController.navigate(Screen.Home) },
+                        onClick = { 
+                            navController.navigate(Screen.Home) {
+                                popUpTo(Screen.Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                         icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                         label = { Text("Home") }
                     )
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<Screen.Pokedex>() } == true,
-                        onClick = { navController.navigate(Screen.Pokedex) },
-                        icon = { Icon(Icons.Default.List, contentDescription = "Pokédex") },
+                        onClick = { 
+                            navController.navigate(Screen.Pokedex) {
+                                popUpTo(Screen.Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Pokédex") },
                         label = { Text("Pokédex") }
                     )
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<Screen.Team>() } == true,
-                        onClick = { navController.navigate(Screen.Team) },
-                        icon = { Icon(Icons.Default.Person, contentDescription = "Time") },
+                        onClick = { 
+                            navController.navigate(Screen.Team) {
+                                popUpTo(Screen.Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = { Icon(Icons.Default.Star, contentDescription = "Time") },
                         label = { Text("Time") }
                     )
                 }

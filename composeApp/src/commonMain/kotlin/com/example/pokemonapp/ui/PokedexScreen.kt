@@ -7,10 +7,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -20,7 +23,6 @@ import com.example.pokemonapp.data.Pokemon
 import com.example.pokemonapp.data.PokemonRepository
 import com.example.pokemonapp.data.PokemonType
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokedexScreen(
     onPokemonClick: (Int) -> Unit
@@ -33,24 +35,35 @@ fun PokedexScreen(
         it.id.toString().contains(searchQuery)
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        SearchBar(
-            query = searchQuery,
-            onQueryChange = { searchQuery = it },
-            onSearch = {},
-            active = false,
-            onActiveChange = {},
-            placeholder = { Text("Buscar Pokémon...") },
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        // Modern Search Bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-        ) {}
+                .padding(16.dp),
+            placeholder = { Text("Buscar por nome ou número...") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent
+            ),
+            singleLine = true
+        )
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             items(filteredPokemon) { pokemon ->
@@ -68,47 +81,70 @@ fun PokemonCard(pokemon: Pokemon, onClick: () -> Unit) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .height(180.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
         Box(
             modifier = Modifier
+                .fillMaxSize()
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(backgroundColor.copy(alpha = 0.7f), backgroundColor)
+                    Brush.linearGradient(
+                        colors = listOf(backgroundColor.copy(alpha = 0.8f), backgroundColor)
                     )
                 )
-                .padding(16.dp)
         ) {
-            Column(horizontalAlignment = Alignment.Start) {
-                Text(
-                    text = "#${pokemon.id.toString().padStart(3, '0')}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.White.copy(alpha = 0.8f)
-                )
-                Text(
-                    text = pokemon.name,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    ),
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                pokemon.types.forEach { type ->
-                    Surface(
-                        color = Color.White.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    ) {
-                        Text(
-                            text = type,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White
-                        )
+            // Decorative Circle
+            Surface(
+                modifier = Modifier
+                    .size(100.dp)
+                    .align(Alignment.BottomEnd)
+                    .offset(x = 20.dp, y = 20.dp),
+                shape = RoundedCornerShape(50.dp),
+                color = Color.White.copy(alpha = 0.15f)
+            ) {}
+
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = pokemon.name,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        ),
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    pokemon.types.forEach { type ->
+                        Surface(
+                            color = Color.White.copy(alpha = 0.25f),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        ) {
+                            Text(
+                                text = type,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
+                
+                Text(
+                    text = "#${pokemon.id.toString().padStart(3, '0')}",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Black
+                    ),
+                    color = Color.Black.copy(alpha = 0.15f),
+                    modifier = Modifier.align(Alignment.End)
+                )
             }
         }
     }

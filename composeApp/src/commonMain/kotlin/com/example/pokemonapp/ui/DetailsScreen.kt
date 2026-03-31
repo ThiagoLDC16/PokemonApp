@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CatchingPokemon
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -41,80 +43,108 @@ fun DetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .background(themeColor)
     ) {
-        // Header with Color Gradient
-        Box(
+        // Header with ID and Name
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(themeColor, themeColor.copy(alpha = 0.6f))
-                    )
-                ),
-            contentAlignment = Alignment.Center
+                .padding(top = 16.dp, start = 24.dp, end = 24.dp, bottom = 0.dp)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = pokemon.name,
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.displaySmall.copy(
+                        fontWeight = FontWeight.Black,
                         color = Color.White
                     )
                 )
                 Text(
                     text = "#${pokemon.id.toString().padStart(3, '0')}",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White.copy(alpha = 0.8f)
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White.copy(alpha = 0.8f)
+                    )
                 )
             }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                pokemon.types.forEach { type ->
+                    Surface(
+                        color = Color.White.copy(alpha = 0.25f),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Text(
+                            text = type,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+
+        // Image Placeholder Area
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Decorative background for image
+            Surface(
+                modifier = Modifier.size(180.dp),
+                shape = RoundedCornerShape(90.dp),
+                color = Color.White.copy(alpha = 0.15f)
+            ) {}
+            
+            Icon(
+                imageVector = Icons.Default.CatchingPokemon,
+                contentDescription = null,
+                modifier = Modifier.size(140.dp),
+                tint = Color.White.copy(alpha = 0.7f)
+            )
         }
 
         // Content Card
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-20).dp),
-            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-            color = MaterialTheme.colorScheme.surface
+            modifier = Modifier.fillMaxSize(),
+            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 2.dp
         ) {
             Column(
                 modifier = Modifier
                     .padding(24.dp)
             ) {
-                // Types
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    pokemon.types.forEach { type ->
-                        SuggestionChip(
-                            onClick = {},
-                            label = { Text(type) },
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Color(PokemonType.getColor(type)).copy(alpha = 0.1f),
-                                labelColor = Color(PokemonType.getColor(type))
-                            )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Text(
                     text = "Sobre",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = themeColor
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = pokemon.description,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    lineHeight = 24.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Atributos",
+                    text = "Atributos Base",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = themeColor
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -123,15 +153,25 @@ fun DetailsScreen(
                 StatRow("Defense", pokemon.defense, themeColor)
                 StatRow("Speed", pokemon.speed, themeColor)
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
                     onClick = { onAddToTeam(pokemon) },
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = themeColor)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = themeColor),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
-                    Text("Adicionar ao Time", color = Color.White)
+                    Text(
+                        "Adicionar ao Time", 
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
                 }
+                
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -139,21 +179,36 @@ fun DetailsScreen(
 
 @Composable
 fun StatRow(label: String, value: Int, color: Color) {
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(label, style = MaterialTheme.typography.labelLarge)
-            Text(value.toString(), fontWeight = FontWeight.Bold)
-        }
-        LinearProgressIndicator(
-            progress = { value / 150f },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp),
-            color = color,
-            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+    Row(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            label, 
+            modifier = Modifier.width(70.dp),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Text(
+            value.toString().padStart(3, '0'), 
+            modifier = Modifier.width(40.dp),
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+        )
+        
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(10.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(5.dp))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(value / 200f) // Max value assumption 200
+                    .fillMaxHeight()
+                    .background(color, RoundedCornerShape(5.dp))
+            )
+        }
     }
 }

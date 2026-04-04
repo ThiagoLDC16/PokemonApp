@@ -72,10 +72,12 @@ fun App() {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<Screen.Home>() } == true,
                         onClick = { 
-                            navController.navigate(Screen.Home) {
-                                popUpTo(Screen.Home) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
+                            if (currentDestination?.hasRoute<Screen.Home>() == false) {
+                                navController.navigate(Screen.Home) {
+                                    popUpTo(Screen.Home) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
@@ -84,10 +86,12 @@ fun App() {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<Screen.Pokedex>() } == true,
                         onClick = { 
-                            navController.navigate(Screen.Pokedex) {
-                                popUpTo(Screen.Home) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
+                            if (currentDestination?.hasRoute<Screen.Pokedex>() == false) {
+                                navController.navigate(Screen.Pokedex) {
+                                    popUpTo(Screen.Home) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Pokédex") },
@@ -96,10 +100,12 @@ fun App() {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<Screen.Team>() } == true,
                         onClick = { 
-                            navController.navigate(Screen.Team) {
-                                popUpTo(Screen.Home) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
+                            if (currentDestination?.hasRoute<Screen.Team>() == false) {
+                                navController.navigate(Screen.Team) {
+                                    popUpTo(Screen.Home) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = { Icon(Icons.Default.Star, contentDescription = "Time") },
@@ -115,8 +121,20 @@ fun App() {
             ) {
                 composable<Screen.Home> {
                     HomeScreen(
-                        onNavigateToPokedex = { navController.navigate(Screen.Pokedex) },
-                        onNavigateToTeam = { navController.navigate(Screen.Team) }
+                        onNavigateToPokedex = { 
+                            navController.navigate(Screen.Pokedex) {
+                                popUpTo(Screen.Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        onNavigateToTeam = { 
+                            navController.navigate(Screen.Team) {
+                                popUpTo(Screen.Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
                     )
                 }
                 composable<Screen.Pokedex> {
@@ -130,7 +148,12 @@ fun App() {
                         pokemonId = details.id,
                         onAddToTeam = { pokemon -> 
                             viewModel.addToTeam(pokemon)
-                            navController.navigate(Screen.Team)
+                            // Navega para o Time limpando a aba da Pokedex (inclusive Detalhes)
+                            // para que a aba Pokedex seja reiniciada ao ser visitada novamente.
+                            navController.navigate(Screen.Team) {
+                                popUpTo<Screen.Pokedex> { inclusive = true }
+                                launchSingleTop = true
+                            }
                         },
                         onNavigateBack = { navController.popBackStack() }
                     )

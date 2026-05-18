@@ -1,6 +1,5 @@
 package com.example.pokemonapp.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,7 +17,6 @@ actual fun TeamScreenContent(
     team: List<Pokemon>,
     onRemovePokemon: (Pokemon) -> Unit
 ) {
-    // No iOS, vamos usar uma estética mais limpa, típica de listas do iOS
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             "Meu Time",

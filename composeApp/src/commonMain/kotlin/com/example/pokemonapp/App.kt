@@ -18,14 +18,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.pokemonapp.data.PokemonRepository
+import com.example.pokemonapp.data.local.AppDatabase
 import com.example.pokemonapp.navigation.Screen
 import com.example.pokemonapp.ui.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App() {
+fun App(database: AppDatabase) {
     val navController = rememberNavController()
-    val viewModel: PokemonViewModel = viewModel { PokemonViewModel() }
+    
+    val repository = remember { PokemonRepository(database) }
+    val viewModel: PokemonViewModel = viewModel { PokemonViewModel(repository) }
+    
     val team by viewModel.team.collectAsState()
     
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -139,6 +144,7 @@ fun App() {
                 }
                 composable<Screen.Pokedex> {
                     PokedexScreen(
+                        viewModel = viewModel,
                         onPokemonClick = { id -> navController.navigate(Screen.Details(id)) }
                     )
                 }
@@ -146,22 +152,14 @@ fun App() {
                     val details: Screen.Details = backStackEntry.toRoute()
                     DetailsScreen(
                         pokemonId = details.id,
-                        onAddToTeam = { pokemon -> 
-                            viewModel.addToTeam(pokemon)
-                            // Navega para o Time limpando a aba da Pokedex (inclusive Detalhes)
-                            // para que a aba Pokedex seja reiniciada ao ser visitada novamente.
-                            navController.navigate(Screen.Team) {
-                                popUpTo<Screen.Pokedex> { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        },
+                        viewModel = viewModel,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
                 composable<Screen.Team> {
                     TeamScreenContent(
                         team = team,
-                        onRemovePokemon = { viewModel.removeFromTeam(it) }
+                        onRemovePokemon = { viewModel.removeFromTeam(it.id) }
                     )
                 }
             }

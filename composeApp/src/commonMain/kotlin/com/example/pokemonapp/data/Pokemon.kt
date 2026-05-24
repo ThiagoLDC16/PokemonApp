@@ -7,12 +7,13 @@ data class Pokemon(
     val id: Int,
     val name: String,
     val imageUrl: String,
-    val types: List<String>,
-    val description: String,
-    val hp: Int,
-    val attack: Int,
-    val defense: Int,
-    val speed: Int
+    val types: List<String> = emptyList(),
+    val description: String = "",
+    val hp: Int = 0,
+    val attack: Int = 0,
+    val defense: Int = 0,
+    val speed: Int = 0,
+    val captureLocation: String? = null
 )
 
 enum class PokemonType(val color: Long) {
@@ -31,7 +32,9 @@ enum class PokemonType(val color: Long) {
     Ghost(0xFF705898),
     Dragon(0xFF7038F8),
     Steel(0xFFB8B8D0),
-    Normal(0xFFA8A878);
+    Normal(0xFFA8A878),
+    Fairy(0xFFEE99AC),
+    Dark(0xFF705848);
 
     companion object {
         fun getColor(typeName: String): Long {

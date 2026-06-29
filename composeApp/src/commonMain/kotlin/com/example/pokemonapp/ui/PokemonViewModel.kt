@@ -30,6 +30,9 @@ class PokemonViewModel(private val repository: PokemonRepository) : ViewModel() 
     private val _team = MutableStateFlow<List<Pokemon>>(emptyList())
     val team: StateFlow<List<Pokemon>> = _team.asStateFlow()
 
+    private val _captureState = MutableStateFlow<CaptureUiState>(CaptureUiState.Idle)
+    val captureState: StateFlow<CaptureUiState> = _captureState.asStateFlow()
+
     init {
         loadInitialData()
         loadTeam()
@@ -103,11 +106,24 @@ class PokemonViewModel(private val repository: PokemonRepository) : ViewModel() 
         }
     }
 
-    fun addToTeam(pokemon: Pokemon, location: String) {
+    fun addToTeam(pokemon: Pokemon, latitude: Double, longitude: Double, photoPath: String) {
         viewModelScope.launch {
-            repository.saveFavorite(pokemon, location)
+            repository.saveFavorite(pokemon, latitude, longitude, photoPath)
             loadTeam()
+            _captureState.value = CaptureUiState.Success
         }
+    }
+
+    fun setCaptureLoading() {
+        _captureState.value = CaptureUiState.Loading
+    }
+
+    fun setCaptureError(message: String) {
+        _captureState.value = CaptureUiState.Error(message)
+    }
+
+    fun resetCaptureState() {
+        _captureState.value = CaptureUiState.Idle
     }
 
     fun removeFromTeam(id: Int) {
@@ -116,4 +132,11 @@ class PokemonViewModel(private val repository: PokemonRepository) : ViewModel() 
             loadTeam()
         }
     }
+}
+
+sealed interface CaptureUiState {
+    data object Idle : CaptureUiState
+    data object Loading : CaptureUiState
+    data object Success : CaptureUiState
+    data class Error(val message: String) : CaptureUiState
 }

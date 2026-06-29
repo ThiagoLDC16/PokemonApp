@@ -33,6 +33,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.play.services.location)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -53,6 +54,12 @@ kotlin {
             
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.moko.permissions)
+            implementation(libs.moko.permissions.camera)
+            implementation(libs.moko.permissions.location)
+            implementation(libs.moko.permissions.compose)
+            implementation(libs.peekaboo.ui)
+            implementation(libs.coil.compose)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

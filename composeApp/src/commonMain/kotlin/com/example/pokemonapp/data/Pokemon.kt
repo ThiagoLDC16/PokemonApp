@@ -13,7 +13,10 @@ data class Pokemon(
     val attack: Int = 0,
     val defense: Int = 0,
     val speed: Int = 0,
-    val captureLocation: String? = null
+    val captureLocation: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val photoPath: String? = null
 )
 
 enum class PokemonType(val color: Long) {

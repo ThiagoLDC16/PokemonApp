@@ -4,5 +4,9 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>A camera sera usada para registrar a foto do treinador com o Pokemon capturado.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>A localizacao sera usada para salvar as coordenadas do momento da captura.</string>
 </dict>
 </plist>

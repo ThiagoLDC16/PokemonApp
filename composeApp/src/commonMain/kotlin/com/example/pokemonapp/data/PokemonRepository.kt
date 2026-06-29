@@ -126,13 +126,20 @@ class PokemonRepository(private val database: AppDatabase) {
         )
     }
 
-    suspend fun saveFavorite(pokemon: Pokemon, location: String) = withContext(Dispatchers.IO) {
+    suspend fun saveFavorite(
+        pokemon: Pokemon,
+        latitude: Double,
+        longitude: Double,
+        photoPath: String
+    ) = withContext(Dispatchers.IO) {
         dao.insertFavorite(
             FavoriteEntity(
                 id = pokemon.id,
                 name = pokemon.name,
                 imageUrl = pokemon.imageUrl,
-                captureLocation = location
+                latitude = latitude,
+                longitude = longitude,
+                photoPath = photoPath
             )
         )
     }
@@ -143,7 +150,10 @@ class PokemonRepository(private val database: AppDatabase) {
                 id = it.id,
                 name = it.name,
                 imageUrl = it.imageUrl,
-                captureLocation = it.captureLocation
+                captureLocation = it.captureLocation,
+                latitude = it.latitude,
+                longitude = it.longitude,
+                photoPath = it.photoPath
             )
         }
     }
